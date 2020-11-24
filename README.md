@@ -44,3 +44,16 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+-----------------------------------------------------------------------------
+
+# Intalações de dependencias 
+
+# bootstrap, axios e react-router-dom
+yarn add react-bootstrap bootstrap axios react-router-dom
+
+yarn add @types/react-dom -D
+
+// import em index.tsx 
+import 'bootstrap/dist/css/bootstrap.min.css';
