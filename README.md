@@ -57,3 +57,10 @@ yarn add @types/react-dom -D
 
 // import em index.tsx 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+yarn add react-icons
+
+
+
+
+    <h2>{id==undefined ? 'Cadastro de Amigo' : 'Atualizar Amigo'}</h2>
