@@ -48,7 +48,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 -----------------------------------------------------------------------------
 
-# Intalações de dependencias 
+# Instalações de dependencias 
 
 # bootstrap, axios e react-router-dom
 yarn add react-bootstrap bootstrap axios react-router-dom
