@@ -1,51 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Alert, Button, Table } from 'react-bootstrap';
 import api from '../../services/api';
 import { BiEdit, BiHeart, BiPlus } from "react-icons/bi";
 import { FaHeartBroken } from "react-icons/fa";
 import Loading from '../../components/Body/loading';
-
 import styles from './index.module.css';
 
 require('react-dom');
 window.React = require('react');
 
-interface IFriends {
+interface IWishes {
   id: number;
   name: string;
+  description: string;
+  link: string;
+  concluded: boolean;
+  friends:[id: number];
 }
 
-const Friends: React.FC = () => {
-  //const [loading, setLoading ] = useState()
-  //setLoading(true)
+const Wishes: React.FC = () => {
+  const [wishes, setWishes] = useState<IWishes[]>([])
 
-  const [friends, setFriends] = useState<IFriends[]>([])
   const [state2, setState2] = useState(false);
   const [stateForm, setStateForm] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [messageFriend, setMessageFriend] = useState("");
-
-  const history = useHistory()
-
-  //const { teste } =useLocation<{id:number}>();
+  const [messageWish, setMessageWish] = useState("");
 
   const { state } = useLocation<string>();
 
+  const history = useHistory()
+
+  const { friend_id }= useParams<{ friend_id: string }>();
+  const friend = Number(friend_id)
+
   useEffect(() => {
-    loadFriends()
+    loadWishes(friend)
   }, [])
 
-  async function loadFriends() {
+  async function loadWishes(friend_id:number) {
     setLoading(true)
-    const response = await api.get('friends')
+    const response = await api.get(`/friends/${friend_id}/wishes`)
     setLoading(false)
 
     if (state === "new") {
-      setMessageFriend("Novo Amigo cadastrado! ")
+      setMessageWish("Novo Desejo cadastrado! ")
       setStateForm(true)
     } else if (state === "update") {
-      setMessageFriend("Amigo atualizado!")
+      setMessageWish("Desejo atualizado!")
       setStateForm(true)
     }
 
@@ -55,87 +57,87 @@ const Friends: React.FC = () => {
 
     history.replace({ ...history.location, state: undefined });
 
-    setFriends(response.data)
+    setWishes(response.data)
   }
 
-  function newFriend() {
-    history.push('friend_cad')
+  function newWish(friend:number) {
+    console.log('entrou')
+    history.push(`/friends/${friend_id}/wish_cad/`)
   }
 
-  function editFriend(id: number) {
-    history.push(`friend_cad/${id}`)
+  function editWish(id: number) {
+    history.push(`/friends/${friend_id}/wish_cad/${id}`)
   }
 
-  async function deleteFriend(id: number) {
-    const response = await api.delete(`friends/${id}`)
+  async function deleteWish(id: number) {
+    const response = await api.delete(`/wishes/${id}`)
 
     if (response.status === 200) {
-      loadFriends()
+      
+      loadWishes(friend)
 
       setState2(true);
       setTimeout(() => {
         setState2(false);
       }, 3000)
     }
-
   }
 
-  function goWishes(id: number) {
-    history.push(`./friends/${id}/wishes`)
+  function goDetail(uid: number){
+    return ''
   }
 
   return (
     <div className="container">
-
       <Alert variant="danger" show={state2} >
-        Amigo deletado! &#x1F494;
+        Desejo deletado! &#x1F494;
       </Alert>
 
       <Alert variant="success" show={stateForm} >
-        {messageFriend} &#128157;
+        {messageWish} &#128157;
       </Alert>
 
       {loading ? (
         <div>
           <Loading></Loading>
-
         </ div>
       ) : (
           <div>
-            <h1>Amigos</h1>
+            <h1>Desejos</h1>
 
             <Table striped bordered hover size="sm" className="text-center">
               <thead>
                 <tr>
-                  <th>Nome</th>
-                  <th>Desejos</th>
+                  <th>Desejo</th>
+                  <th>Link</th>
+                  <th>Detalhe</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {
-                  friends.map(friend => (
-                    <tr key={friend.id}>
-                      <td>{friend.name}</td>
+                  wishes.map(wish => (
+                    <tr key={wish.id}>
+                      <td>{wish.name}</td>
+                      <td> <a href={wish.link} target="_blank" >ver link</a></td>
                       <td><Button variant="outline-info" size="sm"
-                        onClick={() => goWishes(friend.id)} >
+                        onClick={() => goDetail(wish.id)} >
                         <BiHeart />
                       </Button></td>
                       <td>
                         <Button variant="outline-secondary" size="sm"
-                          onClick={() => editFriend(friend.id)} >
+                          onClick={() => editWish(wish.id)} >
                           <BiEdit />{' '}</Button>{' '}
                         <Button variant="outline-danger" size="sm"
                           onClick={
                             () => {
-                              if (window.confirm(`Quer mesmo DELETAR ${friend.name}?`)) {
-                                deleteFriend(friend.id)
+                              if (window.confirm(`Quer mesmo DELETAR o ${wish.name}?`)) {
+                                deleteWish(wish.id)
                               };
                             }
                           } >
                           <FaHeartBroken />
                         </Button>
-
                       </td>
                     </tr>
                   ))
@@ -144,7 +146,7 @@ const Friends: React.FC = () => {
             </Table>
 
             <div className={styles.btn_new}>
-              <Button variant="primary" onClick={newFriend} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
+              <Button variant="primary" onClick={()=> newWish(friend)} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
             </div>
           </div>
         )}
@@ -152,4 +154,4 @@ const Friends: React.FC = () => {
   );
 }
 
-export default Friends;
+export default Wishes;

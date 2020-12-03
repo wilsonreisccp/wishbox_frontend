@@ -12,42 +12,45 @@ interface IFriends {
 
 const Friends: React.FC = () => {
   const history = useHistory()
-  const { id }= useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
 
   const [model, setModel] = useState<IFriends>({
-    name:''
+    name: ''
   })
 
-  useEffect(()=> {
+  useEffect(() => {
     if (id !== undefined) {
-      findFriend()  
+      findFriend()
     }
   }, [id])
 
-  function updateModel(e: ChangeEvent<HTMLInputElement>){
+  function updateModel(e: ChangeEvent<HTMLInputElement>) {
     setModel({
-      ... model,
+      ...model,
       [e.target.name]: e.target.value
     })
   }
 
-  async function onSubmit(e: ChangeEvent<HTMLFormElement>){
+  async function onSubmit(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault()
 
-    let response
+    if (id === undefined) {
+      await api.post('friends', model)
+      history.push('/friends', 'new')
+    } else {
+      await api.put(`friends/${id}`, model)
+      /*
+        history.push('/friends', {id: 2})
 
-    if(id === undefined){
-      response = await api.post('friends', model)
-    }else{
-      response = await api.put(`friends/${id}`, model)
+        const uid:number = 1 
+        passar parameters .push('/', <string, number, objeto, etc>) teste:number
+        history.push('/friends', uid)
+      */
+      history.push('/friends', 'update')
     }
-
-    console.log(response)
-
-    goBack()
   }
 
-  async function findFriend(){
+  async function findFriend() {
     const reponse = await api.get(`friends/${id}`)
 
     setModel({
@@ -55,13 +58,9 @@ const Friends: React.FC = () => {
     })
   }
 
-  function goBack(){
-    history.goBack()
-  }
-
   return (
     <div className="container">
-      
+
       <Form onSubmit={onSubmit}>
         <Form.Group controlId="formBasicName">
           <Form.Label>Nome</Form.Label>
@@ -77,7 +76,7 @@ const Friends: React.FC = () => {
 
         <div className={styles.space_between}>
           <div className={styles.item}>
-            <Button onClick={goBack}  variant="outline-primary"><BiUndo /></Button>
+            <Button onClick={() => { history.goBack() }} variant="outline-primary"><BiUndo /></Button>
           </div>
           <div className={styles.item}>
             <Button variant="outline-primary" type="submit"><BiSave /></Button>

@@ -1,0 +1,11 @@
+.item {
+	margin: 5px;
+	padding: 0 10px;
+	font-size: 1.5em;
+}
+
+.space_between {
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+}

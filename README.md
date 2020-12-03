@@ -60,7 +60,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 yarn add react-icons
 
+/*
+adicioneu ao tsconfig.json para rodar reactjs-localstorage yarn add @types/reactjs-localstorage -D não funciona de jeito nenhum 
+"noImplicitAny": false
+*/
 
+yarn add reactjs-localstorage
 
-
-    <h2>{id==undefined ? 'Cadastro de Amigo' : 'Atualizar Amigo'}</h2>
+yarn add react-loadingg
