@@ -7,6 +7,8 @@ import { FaHeartBroken } from "react-icons/fa";
 import Loading from '../../components/Body/loading';
 import styles from './index.module.css';
 
+import { Detail } from './modalDetail'
+
 require('react-dom');
 window.React = require('react');
 
@@ -16,7 +18,7 @@ interface IWishes {
   description: string;
   link: string;
   concluded: boolean;
-  friends:[id: number];
+  friends: [id: number];
 }
 
 const Wishes: React.FC = () => {
@@ -31,14 +33,14 @@ const Wishes: React.FC = () => {
 
   const history = useHistory()
 
-  const { friend_id }= useParams<{ friend_id: string }>();
+  const { friend_id } = useParams<{ friend_id: string }>();
   const friend = Number(friend_id)
 
   useEffect(() => {
     loadWishes(friend)
   }, [])
 
-  async function loadWishes(friend_id:number) {
+  async function loadWishes(friend_id: number) {
     setLoading(true)
     const response = await api.get(`/friends/${friend_id}/wishes`)
     setLoading(false)
@@ -60,7 +62,7 @@ const Wishes: React.FC = () => {
     setWishes(response.data)
   }
 
-  function newWish(friend:number) {
+  function newWish(friend: number) {
     console.log('entrou')
     history.push(`/friends/${friend_id}/wish_cad/`)
   }
@@ -73,7 +75,7 @@ const Wishes: React.FC = () => {
     const response = await api.delete(`/wishes/${id}`)
 
     if (response.status === 200) {
-      
+
       loadWishes(friend)
 
       setState2(true);
@@ -83,9 +85,12 @@ const Wishes: React.FC = () => {
     }
   }
 
-  function goDetail(uid: number){
-    return ''
+  function goDetail(uid: number) {
+ 
+    
   }
+
+  
 
   return (
     <div className="container">
@@ -119,11 +124,17 @@ const Wishes: React.FC = () => {
                   wishes.map(wish => (
                     <tr key={wish.id}>
                       <td>{wish.name}</td>
-                      <td> <a href={wish.link} target="_blank" >ver link</a></td>
-                      <td><Button variant="outline-info" size="sm"
-                        onClick={() => goDetail(wish.id)} >
-                        <BiHeart />
-                      </Button></td>
+                      <td> 
+                        { wish.link === '' ? 'Sem Página': <a href= {wish.link} target="_blank">Ver página</a>}
+                      </td>
+                      <td>
+                        <Detail 
+                          name={wish.name} 
+                          description={wish.description}
+                          link={wish.link}
+                          concluded={wish.concluded}
+                        ></Detail>
+                      </td>
                       <td>
                         <Button variant="outline-secondary" size="sm"
                           onClick={() => editWish(wish.id)} >
@@ -146,7 +157,7 @@ const Wishes: React.FC = () => {
             </Table>
 
             <div className={styles.btn_new}>
-              <Button variant="primary" onClick={()=> newWish(friend)} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
+              <Button variant="primary" onClick={() => newWish(friend)} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
             </div>
           </div>
         )}
