@@ -44,7 +44,7 @@ const Wishes: React.FC = () => {
   
   useEffect(() => {
     loadWishes(friend);
-  }, [loadWishes])
+  }, [])
 
   async function loadWishes(friend_id: number) {
     setLoading(true)
