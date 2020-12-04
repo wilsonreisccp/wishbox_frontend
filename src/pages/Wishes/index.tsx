@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Alert, Button, Table } from 'react-bootstrap';
 import api from '../../services/api';
-import { BiEdit, BiHeart, BiPlus } from "react-icons/bi";
+import { BiEdit, BiPlus } from "react-icons/bi";
 import { FaHeartBroken } from "react-icons/fa";
 import Loading from '../../components/Body/loading';
 import styles from './index.module.css';
@@ -18,7 +18,12 @@ interface IWishes {
   description: string;
   link: string;
   concluded: boolean;
-  friends: [id: number];
+  friend: IFriend;
+}
+
+interface IFriend {
+  id: number;
+  name: string;
 }
 
 const Wishes: React.FC = () => {
@@ -34,15 +39,19 @@ const Wishes: React.FC = () => {
   const history = useHistory()
 
   const { friend_id } = useParams<{ friend_id: string }>();
-  const friend = Number(friend_id)
-
+  const [friend] = useState(Number(friend_id)) 
+  const [friendState, setFriendState] = useState('')
+  
   useEffect(() => {
-    loadWishes(friend)
-  }, [])
+    loadWishes(friend);
+  }, [loadWishes])
 
   async function loadWishes(friend_id: number) {
     setLoading(true)
     const response = await api.get(`/friends/${friend_id}/wishes`)
+    const res2 = await api.get(`/friends/${friend}`)
+    setFriendState(res2.data.name)
+
     setLoading(false)
 
     if (state === "new") {
@@ -62,13 +71,13 @@ const Wishes: React.FC = () => {
     setWishes(response.data)
   }
 
-  function newWish(friend: number) {
+  function newWish() {
     console.log('entrou')
-    history.push(`/friends/${friend_id}/wish_cad/`)
+    history.push(`/friends/${friend}/wish_cad/`)
   }
 
   function editWish(id: number) {
-    history.push(`/friends/${friend_id}/wish_cad/${id}`)
+    history.push(`/friends/${friend}/wish_cad/${id}`)
   }
 
   async function deleteWish(id: number) {
@@ -84,13 +93,6 @@ const Wishes: React.FC = () => {
       }, 3000)
     }
   }
-
-  function goDetail(uid: number) {
- 
-    
-  }
-
-  
 
   return (
     <div className="container">
@@ -108,7 +110,8 @@ const Wishes: React.FC = () => {
         </ div>
       ) : (
           <div>
-            <h1>Desejos</h1>
+            <br/>
+            <h3>Desejos de {friendState}</h3>
 
             <Table striped bordered hover size="sm" className="text-center">
               <thead>
@@ -125,7 +128,7 @@ const Wishes: React.FC = () => {
                     <tr key={wish.id}>
                       <td>{wish.name}</td>
                       <td> 
-                        { wish.link === '' ? 'Sem Página': <a href= {wish.link} target="_blank">Ver página</a>}
+                        { wish.link === '' ? 'Sem Página': <a href= {wish.link} target="_blank" rel="noreferrer">Ver página</a>}
                       </td>
                       <td>
                         <Detail 
@@ -157,7 +160,7 @@ const Wishes: React.FC = () => {
             </Table>
 
             <div className={styles.btn_new}>
-              <Button variant="primary" onClick={() => newWish(friend)} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
+              <Button variant="primary" onClick={() => newWish()} style={{ borderRadius: 40 }} size="lg"><BiPlus />{' '}</Button>
             </div>
           </div>
         )}
