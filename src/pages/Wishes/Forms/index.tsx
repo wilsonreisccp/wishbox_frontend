@@ -30,20 +30,15 @@ const Wishes: React.FC = () => {
 
   })
 
+  const onWishChange = <P extends keyof IWish>(prop: P, value: IWish[P]) => {
+    setModel({ ...model, [prop]: value });
+  };
+
   useEffect(() => {
     if (uid !== undefined) {
       findWish()
     }
   }, [uid])
-
-  function updateModel(e: ChangeEvent<HTMLInputElement>) {
-    setModel({
-      ...model,
-      [e.target.name]: e.target.value,
-      //[e.target.name]: e.target.checked
-      
-    })
-  }
 
   async function onSubmit(e: ChangeEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -80,10 +75,6 @@ const Wishes: React.FC = () => {
     })
   }
 
-  function handleChange(e){
-    
-  }
-
   return (
     <div className="container">
       {loading ? (
@@ -97,7 +88,7 @@ const Wishes: React.FC = () => {
               <Form.Label>Desejo</Form.Label>
               <Form.Control type="text" placeholder=""
                 name="name"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => updateModel(e)}
+                onChange={e => onWishChange('name', e.target.value)}
                 value={model.name}
               />
             </Form.Group>
@@ -106,7 +97,7 @@ const Wishes: React.FC = () => {
               <Form.Label>Descrição</Form.Label>
               <Form.Control as="textarea" rows={3}
                 name="description"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => updateModel(e)}
+                onChange={e => onWishChange('description', e.target.value)}
                 value={model.description}
               />
             </Form.Group>
@@ -115,7 +106,7 @@ const Wishes: React.FC = () => {
               <Form.Label>Link</Form.Label>
               <Form.Control type="text" placeholder=""
                 name="link"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => updateModel(e)}
+                onChange={e => onWishChange('link', e.target.value)}
                 value={model.link}
               />
             </Form.Group>
@@ -124,7 +115,7 @@ const Wishes: React.FC = () => {
                 name="concluded"
                 type={`checkbox`}
                 id={`default-checkbox`}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => updateModel(e)}
+                onChange={() => onWishChange('concluded', !model.concluded)}
                 checked = {model.concluded}
               /> {model.concluded ? 'Concedido':'Pendente'}
             </div>
