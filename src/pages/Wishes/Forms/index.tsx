@@ -40,8 +40,8 @@ const Wishes: React.FC = () => {
     setModel({
       ...model,
       [e.target.name]: e.target.value,
-      [e.target.name]: e.target.checked
-      //[e.target.concluded]: e.target.value
+      //[e.target.name]: e.target.checked
+      
     })
   }
 
